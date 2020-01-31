@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, useState, useTransition } from 'react';
+import { fetchUppercaseText } from './fakeApi';
+import UppercaseDisplay from './uppercase-display';
+
+const TRANSITION_CONFIG = {
+  timeoutMs: 1000 // Play with this number for a bit 👨‍💻
+};
 
 function App() {
+  const [textResource, setTextResource] = useState(null);
+  const [startTransition, isPending] = useTransition(TRANSITION_CONFIG);
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    const text = event.target.elements.textInput.value;
+    startTransition(() => {
+      setTextResource(fetchUppercaseText(text))
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      <h1>Uppercase Generator</h1>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="textInput">lowercase: </label>
+        <input id="textInput"/>
+        <button
+          disabled={isPending}
+          type="submit"
         >
-          Learn React
-        </a>
-      </header>
+          TO THE UPPERCASE!
+        </button>
+      </form>
+      <Suspense fallback={<p>Processing ...</p>}>
+        <UppercaseDisplay textResource={textResource} isPending={isPending} />
+      </Suspense>
     </div>
   );
 }

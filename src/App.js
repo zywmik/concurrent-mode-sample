@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useTransition } from 'react';
 import { fetchUppercaseText } from './fakeApi';
 import UppercaseDisplay from './uppercase-display';
+import './app.css';
 
 const TRANSITION_CONFIG = {
   timeoutMs: 1000 // Play with this number for a bit 👨‍💻
@@ -22,17 +23,17 @@ function App() {
     <div>
       <h1>Uppercase Generator</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="textInput">lowercase: </label>
-        <input id="textInput"/>
-        <button
-          disabled={isPending}
-          type="submit"
-        >
-          TO THE UPPERCASE!
+        <input id="textInput" placeholder="from lowercase..."/>
+        <button type="submit">
+          ...TO THE UPPERCASE!
         </button>
       </form>
-      <Suspense fallback={<p>Processing ...</p>}>
-        <UppercaseDisplay textResource={textResource} isPending={isPending} />
+      <Suspense fallback={<div className="loader">Loading ...</div>}>
+        <UppercaseDisplay
+          textResource={textResource}
+          isPending={isPending}
+          className="uppercase-display"
+        />
       </Suspense>
     </div>
   );
